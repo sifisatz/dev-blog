@@ -7,28 +7,36 @@ interface IPosts {
   body: string;
   likes: number;
 }
+interface Res  {
+posts: Array<IPosts>;
+}
 
 export default async function Home  () {
 
-const { data, loading, error } = useGitHubJsonData(``);
-  console.log('data', data)
+  const {posts} : Res = await getData()
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <Link href={'/about'}>About</Link>
-      <Link href={'/blog/1'}>Blog 1</Link>
-      <Link href={'/blog/2'}>Blog 2</Link>
-      <Link href={'/blog/3'}>Blog 3 </Link>
+
+      {posts.map((post) => (
+         <Link key={post.id} href={'/post/[id]'} as={`/post/${post.id}`}>
+          {post.title}
+      </Link>))}
+
     </div>
   )
 }
 
 
-// This gets called on every request
-export async function getServerSideProps() {
-  // Fetch data from external API
+
+async function getData() {
   const res = await fetch(`https://raw.githubusercontent.com/sifisatz/dev-blog/master/resources/db.json`)
-  const data :IPosts = await res.json()
+  // The return value is *not* serialized
+  // You can return Date, Map, Set, etc.
  
-  // Pass data to the page via props
-  return { props: { data } }
+  if (!res.ok) {
+    // This will activate the closest `error.js` Error Boundary
+    throw new Error('Failed to fetch data')
+  }
+ 
+  return res.json()
 }
