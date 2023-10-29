@@ -1,19 +1,10 @@
 import Link from 'next/link'
-import useGitHubJsonData from './hooks/useGitHubJsonData';
+import { PostsResponse } from './interfaces'
 
-interface IPosts {
-  id: string;
-  title: string;
-  body: string;
-  likes: number;
-}
-interface Res  {
-posts: Array<IPosts>;
-}
 
 export default async function Home  () {
 
-  const {posts} : Res = await getData()
+  const {posts} : PostsResponse = await getData()
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
